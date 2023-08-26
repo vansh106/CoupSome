@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@id/buyCouponsFragment"
+        android:icon="@drawable/selector_cart"
+        android:title="Buy Coupons" />
+
+    <item
+        android:id="@id/addCouponFragment"
+        android:icon="@drawable/selector_add"
+        android:title="Add Coupon" />
+
+    <item
+        android:id="@id/profileFragment"
+        android:icon="@drawable/selector_profile"
+        android:title="Profile" />
+</menu>

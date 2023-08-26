@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "635457759481",
+    "project_id": "couponbazar-a7b1d",
+    "storage_bucket": "couponbazar-a7b1d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:635457759481:android:64f92531fcd6412f6b5a28",
+        "android_client_info": {
+          "package_name": "in.coupsome"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "635457759481-lj1i4jcsi0lsp8r5tq9ntgnhq0gdiv7l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB0MnXfc5Q-sDhRfX7fUdPPrnQ0lP_sSfM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "635457759481-lj1i4jcsi0lsp8r5tq9ntgnhq0gdiv7l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

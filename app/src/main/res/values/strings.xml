@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">CoupSome</string>
+    <string name="password">Password</string>
+    <string name="email">Email</string>
+    <string name="already_a_user_sign_up">Already a user? Sign up</string>
+    <string name="login">Login</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="already_have_an_account_sign_in">Already have an account? Sign In</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="send_us_a_message_regarding_all_your_queries_and_issues_related_to_your_sales_refund_request_account_etc">Send us a message regarding all your queries and issues related to your sales, refund request, account, etc.</string>
+    <string-array name="categories">
+        <item>Select from below</item>
+        <item>Food</item>
+        <item>Fashion</item>
+        <item>Others</item>
+    </string-array>
+</resources>

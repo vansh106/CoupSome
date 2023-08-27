@@ -46,6 +46,7 @@
             android:background="@drawable/bg_top_right_round"
             android:padding="@dimen/_8sdp"
             android:textColor="@color/white"
+            android:id="@+id/tv_price"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_description"
@@ -64,6 +65,19 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/img_coupon" />
 
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tv_status"
+            style="@style/label_small"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            app:layout_constraintBottom_toBottomOf="@id/btn_buy"
+            android:visibility="gone"
+            app:layout_constraintEnd_toStartOf="@id/btn_buy"
+            app:layout_constraintStart_toEndOf="@id/tv_price"
+            app:layout_constraintTop_toTopOf="@id/tv_price"
+            tools:text="Verified" />
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_buy"
             android:layout_width="0dp"
@@ -73,8 +87,7 @@
             android:text="BUY"
             app:cornerRadius="@dimen/_4sdp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@id/img_coupon" />
+            app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

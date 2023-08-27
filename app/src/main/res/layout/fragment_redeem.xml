@@ -67,6 +67,11 @@
                 android:layout_marginTop="@dimen/_32sdp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/item_sale" />
+
+            <include
+                android:id="@+id/layout_empty_state"
+                layout="@layout/layout_empty_state"
+                android:visibility="gone" />
         </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.core.widget.NestedScrollView>
 

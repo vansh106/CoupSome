@@ -3,6 +3,7 @@ package `in`.coupsome.model
 import android.os.Parcelable
 import androidx.recyclerview.widget.DiffUtil
 import `in`.coupsome.base.model.AppData
+import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -16,8 +17,8 @@ data class BuyCoupon(
     var valid: String? = null,
     var category: String? = null,
     var key: String? = null,
-) : Parcelable, AppData() {
     var userId: String? = null
+) : Parcelable, AppData() {
 
     companion object diffUtil : DiffUtil.ItemCallback<BuyCoupon>() {
         override fun areItemsTheSame(oldItem: BuyCoupon, newItem: BuyCoupon): Boolean =

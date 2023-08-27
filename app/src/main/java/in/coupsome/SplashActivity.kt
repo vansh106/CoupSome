@@ -2,7 +2,6 @@ package `in`.coupsome
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
@@ -20,17 +19,10 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>(ActivitySplashBinding
     @Inject
     lateinit var firebaseAuth: FirebaseAuth
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        installSplashScreen().apply {
-            setKeepOnScreenCondition { true }
-        }
-    }
-
     override fun ActivitySplashBinding.setupViews(savedInstanceState: Bundle?) {
         lifecycleScope.launch {
             delay(500)
-            if (true ?: firebaseAuth.currentUser != null) {
+            if (firebaseAuth.currentUser != null) {
                 MainActivity.start(this@SplashActivity)
                 finish()
             } else {

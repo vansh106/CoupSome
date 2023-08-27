@@ -19,7 +19,7 @@ typealias InflateFragmentLayout<T> = (LayoutInflater, ViewGroup?, Boolean) -> T
 abstract class BaseFragment<VB : ViewBinding>(
     private val bindInflater: InflateFragmentLayout<VB>
 ) : Fragment() {
-    private var binding: VB? = null
+    var binding: VB? = null
         private set
 
     override fun onCreate(savedInstanceState: Bundle?) {

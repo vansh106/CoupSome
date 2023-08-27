@@ -18,4 +18,13 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/header"
         tools:listitem="@layout/item_coupon" />
+
+    <include
+        android:id="@+id/layout_empty_state"
+        layout="@layout/layout_empty_state"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header" />
 </androidx.constraintlayout.widget.ConstraintLayout>

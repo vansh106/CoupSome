@@ -13,8 +13,23 @@ val minorVersion = 0
 val patchVersion = 0
 
 android {
+    signingConfigs {
+        create("dev") {
+            storeFile = file("keystore/debug-keystore.jks")
+            storePassword = "CoupSome#Debug@2023"
+            keyAlias = "debug"
+            keyPassword = "CoupSome#Debug@2023"
+        }
+        create("release") {
+            storeFile = file("keystore/release-keystore.jks")
+            storePassword = "CoupSome#Release@2023"
+            keyAlias = "release"
+            keyPassword = "CoupSome#Release@2023"
+        }
+    }
     namespace = "in.coupsome"
     compileSdk = 34
+
 
     defaultConfig {
         applicationId = "in.coupsome"
@@ -28,9 +43,13 @@ android {
     }
 
     buildTypes {
+        debug {
+            signingConfig = signingConfigs.getByName("dev")
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {
@@ -61,6 +80,7 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.2.3"))
     implementation("com.google.firebase:firebase-auth-ktx")
     implementation("com.google.firebase:firebase-database-ktx")
+    implementation("com.google.firebase:firebase-messaging-ktx")
 
     //hilt
     implementation("com.google.dagger:hilt-android:2.46")
@@ -70,9 +90,6 @@ dependencies {
     //dimens
     implementation("com.intuit.sdp:sdp-android:1.1.0")
     implementation("com.intuit.ssp:ssp-android:1.1.0")
-
-    //splash
-    implementation("androidx.core:core-splashscreen:1.0.1")
 
     //razorpay
     implementation("com.razorpay:checkout:1.6.33")

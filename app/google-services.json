@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "635457759481",
+    "firebase_url": "https://couponbazar-a7b1d-default-rtdb.firebaseio.com",
     "project_id": "couponbazar-a7b1d",
     "storage_bucket": "couponbazar-a7b1d.appspot.com"
   },
@@ -14,7 +15,23 @@
       },
       "oauth_client": [
         {
-          "client_id": "635457759481-lj1i4jcsi0lsp8r5tq9ntgnhq0gdiv7l.apps.googleusercontent.com",
+          "client_id": "635457759481-ie2gn2900pg5tdqmf34rdgsvt4isnam1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "in.coupsome",
+            "certificate_hash": "e23319bf7c23c52adb3f68d6ac58a54c9a73dae9"
+          }
+        },
+        {
+          "client_id": "635457759481-kdinvi8us5f3i5mj725kabc1af8mv7gq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "in.coupsome",
+            "certificate_hash": "9d45b40af3b5a74a17aab991eb6d62de60a572e6"
+          }
+        },
+        {
+          "client_id": "635457759481-gq9pttven5u8hp9h2rc3dkt998ki56me.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -27,7 +44,7 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "635457759481-lj1i4jcsi0lsp8r5tq9ntgnhq0gdiv7l.apps.googleusercontent.com",
+              "client_id": "635457759481-gq9pttven5u8hp9h2rc3dkt998ki56me.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

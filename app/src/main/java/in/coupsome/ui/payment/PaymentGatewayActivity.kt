@@ -41,12 +41,7 @@ class PaymentGatewayActivity : BaseActivity<ActivityPaymentGatewayBinding>(Activ
             finish()
     }
 
-    fun startPayment(coupon: BuyCoupon) {
-        currentUserRef
-            .child("my_sales")
-            .child(coupon.key!!)
-            .child("valid")
-            .setValue("2")
+    private fun startPayment(coupon: BuyCoupon) {
         val activity: Activity = this
         val co = Checkout()
         try {
@@ -99,23 +94,28 @@ class PaymentGatewayActivity : BaseActivity<ActivityPaymentGatewayBinding>(Activ
         txnMap["txn_id"] = p0
         txnMap["txn_type"] = "Buy"
         txnMap["txn_amount"] = coupon?.price
+
+        coupon?.let { coupon ->
+            userReference
+                .child(coupon.userId!!)
+                .child("my_sales")
+                .child(coupon.key!!)
+                .child("valid")
+                .setValue("2")
+        }
         currentUserRef
             .child("txns")
             .push()
             .setValue(txnMap)
+
 
         setResult(RESULT_OK)
         finish()
     }
 
     override fun onPaymentError(p0: Int, p1: String?) {
-        coupon?.let {
-            currentUserRef
-                .child("my_sales")
-                .child(it.key!!)
-                .child("valid")
-                .setValue(it.valid)
-        }
+        setResult(RESULT_CANCELED)
+        finish()
     }
 
     companion object {

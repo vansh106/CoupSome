@@ -3,6 +3,7 @@ package `in`.coupsome.ui.auth
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -67,15 +68,17 @@ class AuthenticationActivity : BaseActivity<ActivityAuthBinding>(ActivityAuthBin
         auth.signInWithCredential(credentials).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 auth.currentUser?.let {
-                    AppUser(
-                        fullName = it.displayName,
-                        phone = it.phoneNumber,
-                        email = it.email,
+                    userReference.child(it.uid).setValue(
+                        AppUser(
+                            fullName = it.displayName,
+                            phone = it.phoneNumber,
+                            email = it.email,
+                        )
                     )
-                    userReference.child(it.uid).setValue(it)
                 }
                 MainActivity.start(this@AuthenticationActivity)
             } else {
+                Log.d("AuthenticationActivity.kt", "YASH => firebaseAuth:80 ${task.exception}")
                 showToast("Error signing in!")
             }
         }

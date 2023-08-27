@@ -3,6 +3,7 @@ package `in`.coupsome.ui.profile
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
+import androidx.core.view.isVisible
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -76,10 +77,15 @@ class MySalesFragment : BaseFragment<FragmentRedeemBinding>(
     override fun onDataChange(snapshot: DataSnapshot) {
         val list: ArrayList<BuyCoupon> = arrayListOf()
         for (dataSnapshot in snapshot.children) {
+            Log.d("MySalesFragment.kt", "YASH => onDataChange:79 $dataSnapshot")
             val m: BuyCoupon? = dataSnapshot.getValue(BuyCoupon::class.java)
             if (m?.valid.equals("2")) {
                 m?.let { list.add(it) }
             }
+        }
+        binding?.apply {
+            layoutEmptyState.root.isVisible = list.isEmpty()
+            recyclerView.isVisible = list.isNotEmpty()
         }
         adapter.submit(list)
     }

@@ -2,6 +2,7 @@ package `in`.coupsome.ui.profile
 
 import android.os.Bundle
 import android.util.Log
+import androidx.core.view.isVisible
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -47,7 +48,7 @@ class MyCouponsFragment: BaseFragment<FragmentRecyclerViewBinding>(
     override fun FragmentRecyclerViewBinding.setupViews(savedInstanceState: Bundle?) {
         setTitle("My Coupons")
         recyclerView.adapter = adapter
-        userReference.child("CouponsBought").addValueEventListener(this@MyCouponsFragment)
+        userReference.child(userId).child("CouponsBought").addValueEventListener(this@MyCouponsFragment)
     }
 
     override fun onDataChange(snapshot: DataSnapshot) {
@@ -55,6 +56,10 @@ class MyCouponsFragment: BaseFragment<FragmentRecyclerViewBinding>(
         for (data in snapshot.children) {
             val buyCoupon = data.getValue(BuyCoupon::class.java)
             buyCoupon?.let { list.add(it) }
+        }
+        binding?.apply {
+            layoutEmptyState.root.isVisible = list.isEmpty()
+            recyclerView.isVisible = list.isNotEmpty()
         }
         adapter.submit(list)
     }

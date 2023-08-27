@@ -8,13 +8,31 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 import `in`.coupsome.base.activity.BaseActivity
 import `in`.coupsome.databinding.ActivityMainBinding
+import `in`.coupsome.di.UsersReference
+import `in`.coupsome.ui.auth.AuthenticationActivity
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::inflate) {
     private lateinit var navController: NavController
+
+    @Inject
+    lateinit var auth: FirebaseAuth
+
+    @Inject
+    @UsersReference
+    lateinit var usersReference: DatabaseReference
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        refreshToken()
+    }
 
     override fun ActivityMainBinding.setupViews(savedInstanceState: Bundle?) {
         val navHostFragment =
@@ -32,6 +50,23 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
         }
         ivBack.setOnClickListener {
             navController.navigateUp()
+        }
+        auth.addAuthStateListener {
+            if (auth.currentUser == null) {
+                AuthenticationActivity.start(this@MainActivity)
+                finish()
+            }
+        }
+    }
+
+    private fun refreshToken() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener {
+            if (it.isSuccessful) {
+                val token = it.result
+                auth.currentUser?.uid?.let { uid ->
+                    usersReference.child(uid).child("token").setValue(token)
+                }
+            }
         }
     }
 

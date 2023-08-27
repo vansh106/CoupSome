@@ -5,6 +5,7 @@ import android.util.Patterns
 import android.view.View
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.database.FirebaseDatabase
 import dagger.hilt.android.AndroidEntryPoint
 import `in`.coupsome.base.fragment.BaseFragment
@@ -70,6 +71,14 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>(
                 auth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
+                            task.result.user?.let {
+                                userProfileChangeRequest {
+                                    displayName = fullName
+                                }.let { request ->
+                                    it.updateProfile(request)
+                                }
+                            }
+
                             val user = AppUser(fullName, phoneNumber, email)
                             FirebaseDatabase.getInstance().getReference("Users").child(
                                 FirebaseAuth.getInstance().currentUser!!.uid

@@ -59,6 +59,7 @@
         android:visibility="gone"
         app:autoSizeMinTextSize="@dimen/_12ssp"
         app:autoSizeStepGranularity="@dimen/_2ssp"
+        app:layout_constraintVertical_bias="0.25"
         app:autoSizeTextType="uniform"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"

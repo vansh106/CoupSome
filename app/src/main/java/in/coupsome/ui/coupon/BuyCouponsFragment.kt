@@ -62,6 +62,13 @@ class BuyCouponsFragment : BaseFragment<FragmentBuyCouponsBinding>(FragmentBuyCo
                         Log.d("BuyCouponsFragment.kt", "YASH => :62 ${data.userId}")
                         paymentGatewayActivityLauncher.launch(data)
                     }
+                    imgCoupon.setImageResource(
+                        when (data.category) {
+                            "Fashion" -> R.drawable.fashion_buy_icon
+                            "Food" -> R.drawable.food_buy_icon
+                            else -> R.drawable.img_coupon
+                        }
+                    )
                 }
             }
         }
@@ -70,7 +77,6 @@ class BuyCouponsFragment : BaseFragment<FragmentBuyCouponsBinding>(FragmentBuyCo
     override fun FragmentBuyCouponsBinding.setupViews(savedInstanceState: Bundle?) {
         setTitle("Buy Coupons")
         usersReference
-            .child("")
             .orderByChild("my_sales")
             .addValueEventListener(this@BuyCouponsFragment)
         recyclerView.adapter = adapter
@@ -95,6 +101,7 @@ class BuyCouponsFragment : BaseFragment<FragmentBuyCouponsBinding>(FragmentBuyCo
                 }
             }
         }
+        Log.d("BuyCouponsFragment.kt", "YASH => onDataChange:98 $list")
         binding?.apply {
             layoutEmptyState.root.isVisible = list.isEmpty()
             recyclerView.isVisible = list.isNotEmpty()

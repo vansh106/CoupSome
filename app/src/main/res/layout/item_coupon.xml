@@ -55,13 +55,13 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/img_coupon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="1"
             android:layout_marginTop="@dimen/_12sdp"
-            android:layout_marginEnd="@dimen/_16sdp"
             app:layout_constraintBottom_toTopOf="@id/btn_buy"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/tv_title"
+            app:layout_constraintEnd_toEndOf="@id/btn_buy"
+            app:layout_constraintStart_toStartOf="@id/btn_buy"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/img_coupon" />
 

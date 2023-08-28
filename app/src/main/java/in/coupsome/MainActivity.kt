@@ -3,6 +3,7 @@ package `in`.coupsome
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -63,6 +64,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
         FirebaseMessaging.getInstance().token.addOnCompleteListener {
             if (it.isSuccessful) {
                 val token = it.result
+                Log.d("MainActivity.kt", "YASH => refreshToken:66 $token")
                 auth.currentUser?.uid?.let { uid ->
                     usersReference.child(uid).child("token").setValue(token)
                 }

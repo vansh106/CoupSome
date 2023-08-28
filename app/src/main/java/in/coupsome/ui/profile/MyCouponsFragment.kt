@@ -9,6 +9,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import dagger.hilt.android.AndroidEntryPoint
+import `in`.coupsome.R
 import `in`.coupsome.base.adapter.BaseAdapter
 import `in`.coupsome.base.fragment.BaseFragment
 import `in`.coupsome.databinding.FragmentRecyclerViewBinding
@@ -40,6 +41,13 @@ class MyCouponsFragment: BaseFragment<FragmentRecyclerViewBinding>(
                     tvTitle.text = data.brand
                     tvDescription.text = data.benefits
                     tvAmount.text = data.price
+                    imgCoupon.setImageResource(
+                        when (data.category) {
+                            "Fashion" -> R.drawable.fashion_buy_icon
+                            "Food" -> R.drawable.food_buy_icon
+                            else -> R.drawable.img_coupon
+                        }
+                    )
                 }
             }
         }

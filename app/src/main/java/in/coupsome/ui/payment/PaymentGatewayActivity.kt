@@ -118,10 +118,15 @@ class PaymentGatewayActivity : BaseActivity<ActivityPaymentGatewayBinding>(Activ
         finish()
     }
 
+    override fun onBackPressed() {
+        setResult(RESULT_CANCELED)
+        finish()
+    }
+
     companion object {
         private const val ARG_COUPON = "coupon"
-
     }
+
     class PaymentGatewayActivityResultContract : ActivityResultContract<BuyCoupon, Boolean>() {
         override fun createIntent(context: Context, input: BuyCoupon) =
             Intent(context, PaymentGatewayActivity::class.java)

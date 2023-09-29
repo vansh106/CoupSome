@@ -119,10 +119,13 @@
                 android:text="@string/sign_up" />
 
             <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_terms"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_16sdp"
                 android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
                 android:text="By signing up, you agree to our Terms of Use and Privacy Policy"
                 android:textColor="@color/gray_600" />
 

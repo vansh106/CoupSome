@@ -94,6 +94,10 @@ class PaymentGatewayActivity : BaseActivity<ActivityPaymentGatewayBinding>(Activ
         txnMap["txn_id"] = p0
         txnMap["txn_type"] = "Buy"
         txnMap["txn_amount"] = coupon?.price
+        currentUserRef
+            .child("txns")
+            .push()
+            .setValue(txnMap)
 
         coupon?.let { coupon ->
             userReference
@@ -102,12 +106,13 @@ class PaymentGatewayActivity : BaseActivity<ActivityPaymentGatewayBinding>(Activ
                 .child(coupon.key!!)
                 .child("valid")
                 .setValue("2")
+            txnMap["txn_type"] = "Sale"
+            userReference
+                .child(coupon.userId!!)
+                .child("txns")
+                .push()
+                .setValue(txnMap)
         }
-        currentUserRef
-            .child("txns")
-            .push()
-            .setValue(txnMap)
-
 
         setResult(RESULT_OK)
         finish()

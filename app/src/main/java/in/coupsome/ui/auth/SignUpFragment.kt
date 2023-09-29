@@ -1,6 +1,11 @@
 package `in`.coupsome.ui.auth
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
 import android.util.Patterns
 import android.view.View
 import androidx.navigation.fragment.findNavController
@@ -28,6 +33,33 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>(
         }
         btnSignUp.setOnClickListener { registerUser() }
         btnGoogle.setOnClickListener { (requireActivity() as AuthenticationActivity).googleSignIn() }
+        val text = "By signing up, you agree to our Terms of Use and Privacy Policy"
+        val spannableString = SpannableString(text)
+        spannableString.setSpan(object : ClickableSpan() {
+            override fun onClick(widget: View) {
+                try {
+                    startActivity(
+                        Intent(Intent.ACTION_VIEW, Uri.parse("https://pdfhost.io/v/amZtrmuYO_privacy_policy"))
+                    )
+                } catch (e: Exception) {
+                    showToast("Unable to view privacy policy!")
+                }
+            }
+        }, text.indexOf("Privacy"), text.length, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE)
+        spannableString.setSpan(object : ClickableSpan() {
+            override fun onClick(widget: View) {
+                try {
+                    // TODO@vansh: 29/09/23 change this link
+                    startActivity(
+                        Intent(Intent.ACTION_VIEW, Uri.parse("https://azure-honey-31.tiiny.site/"))
+                    )
+                } catch (e: Exception) {
+                    showToast("Unable to view privacy policy!")
+                }
+            }
+        }, text.indexOf("Terms"), text.indexOf(" and"), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE)
+        tvTerms.text = spannableString
+        tvTerms.movementMethod = LinkMovementMethod.getInstance()
     }
 
     private fun FragmentSignupBinding.registerUser() {

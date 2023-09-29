@@ -53,6 +53,9 @@
             app:destination="@id/mySalesFragment"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim" />
+        <action
+            android:id="@+id/action_profileFragment_to_allTransactionsFragment"
+            app:destination="@id/allTransactionsFragment" />
     </fragment>
     <fragment
         android:id="@+id/addCouponFragment"
@@ -76,4 +79,8 @@
         android:id="@+id/mySalesFragment"
         android:name="in.coupsome.ui.profile.MySalesFragment"
         android:label="MySalesFragment" />
+    <fragment
+        android:id="@+id/allTransactionsFragment"
+        android:name="in.coupsome.ui.profile.AllTransactionsFragment"
+        android:label="AllTransactionsFragment" />
 </navigation>

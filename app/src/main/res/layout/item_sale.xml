@@ -48,24 +48,24 @@
                 tools:text="@tools:sample/lorem/random" />
 
             <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/tv_amount"
+                android:id="@+id/tv_code"
                 style="@style/label_medium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/green_900"
-                tools:maxLines="1"
                 tools:text="@tools:sample/lorem/random" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/img_coupon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/_64sdp"
+            android:layout_height="0dp"
             android:layout_marginVertical="@dimen/_12sdp"
             android:layout_marginEnd="@dimen/_16sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintDimensionRatio="1"
             app:layout_constraintStart_toEndOf="@id/ll_info"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/img_coupon" />

@@ -35,17 +35,20 @@ class BuyCouponsFragment : BaseFragment<FragmentBuyCouponsBinding>(FragmentBuyCo
 
     private val paymentGatewayActivityLauncher =
         registerForActivityResult(PaymentGatewayActivity.PaymentGatewayActivityResultContract()) {
-            Log.d("BuyCouponsFragment.kt", "YASH => onActivityResult: $it")
-            MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Congratulations")
-                .setMessage(
-                    "Congrats for your savings. Payment Successfully Done!\n" +
-                            "Go to profile page to view transaction details and coupons bought."
-                )
-                .setPositiveButton("Dismiss") { dialog, _ ->
-                    dialog.dismiss()
-                }
-                .show()
+            if (it) {
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("Congratulations")
+                    .setMessage(
+                        "Congrats for your savings. Payment Successfully Done!\n" +
+                                "Go to profile page to view transaction details and coupons bought."
+                    )
+                    .setPositiveButton("Dismiss") { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .show()
+            } else{
+                showToast("Payment Failed")
+            }
         }
 
     private val adapter by lazy {

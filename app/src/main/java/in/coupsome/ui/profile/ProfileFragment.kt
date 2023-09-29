@@ -1,5 +1,7 @@
 package `in`.coupsome.ui.profile
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
@@ -23,8 +25,20 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(
             R.drawable.ic_user_m,
             firebaseAuth.currentUser?.displayName ?: "Guest"
         )
+        tvTransactions.setOnClickListener {
+            navigateTo(ProfileFragmentDirections.actionProfileFragmentToAllTransactionsFragment())
+        }
         tvAboutUs.setOnClickListener {
             navigateTo(ProfileFragmentDirections.actionProfileFragmentToAboutUsFragment())
+        }
+        tvPrivacyPolicy.setOnClickListener {
+            try {
+                startActivity(
+                    Intent(Intent.ACTION_VIEW, Uri.parse("https://pdfhost.io/v/amZtrmuYO_privacy_policy"))
+                )
+            } catch (e: Exception) {
+                showToast("Unable to view privacy policy!")
+            }
         }
         tvFaq.setOnClickListener {
             navigateTo(ProfileFragmentDirections.actionProfileFragmentToFaqFragment())

@@ -40,7 +40,7 @@ class MySalesFragment : BaseFragment<FragmentRedeemBinding>(
                 with(binding) {
                     tvTitle.text = data.brand
                     tvDescription.text = data.benefits
-                    tvAmount.text = data.price
+                    tvCode.text = "Rs. " + data.price
                 }
             }
         }

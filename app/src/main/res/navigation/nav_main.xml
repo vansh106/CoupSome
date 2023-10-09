@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_main"
+    app:startDestination="@id/buyCouponsFragment">
+
+    <fragment
+        android:id="@+id/buyCouponsFragment"
+        android:name="in.coupsome.ui.coupon.BuyCouponsFragment"
+        android:label="fragment_buy_coupons"
+        tools:layout="@layout/fragment_buy_coupons" />
+    <fragment
+        android:id="@+id/faqFragment"
+        android:name="in.coupsome.ui.other.FaqFragment"
+        android:label="FaqFragment" />
+    <fragment
+        android:id="@+id/aboutUsFragment"
+        android:name="in.coupsome.ui.other.AboutUsFragment"
+        android:label="AboutUsFragment" />
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="in.coupsome.ui.profile.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/action_profileFragment_to_faqFragment"
+            app:destination="@id/faqFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim" />
+        <action
+            android:id="@+id/action_profileFragment_to_aboutUsFragment"
+            app:destination="@id/aboutUsFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim" />
+        <action
+            android:id="@+id/action_profileFragment_to_contactUsFragment"
+            app:destination="@id/contactUsFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim" />
+        <action
+            android:id="@+id/action_profileFragment_to_myCouponsFragment"
+            app:destination="@id/myCouponsFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim" />
+        <action
+            android:id="@+id/action_profileFragment_to_manageSalesFragment"
+            app:destination="@id/manageSalesFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim" />
+        <action
+            android:id="@+id/action_profileFragment_to_mySalesFragment"
+            app:destination="@id/mySalesFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim" />
+        <action
+            android:id="@+id/action_profileFragment_to_allTransactionsFragment"
+            app:destination="@id/allTransactionsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addCouponFragment"
+        android:name="in.coupsome.ui.coupon.AddCouponFragment"
+        android:label="fragment_add_coupon"
+        tools:layout="@layout/fragment_add_coupon" />
+    <fragment
+        android:id="@+id/contactUsFragment"
+        android:name="in.coupsome.ui.other.ContactUsFragment"
+        android:label="fragment_contact_us"
+        tools:layout="@layout/fragment_contact_us" />
+    <fragment
+        android:id="@+id/myCouponsFragment"
+        android:name="in.coupsome.ui.profile.MyCouponsFragment"
+        android:label="MyCouponsFragment" />
+    <fragment
+        android:id="@+id/manageSalesFragment"
+        android:name="in.coupsome.ui.profile.ManageSalesFragment"
+        android:label="ManageSalesFragment" />
+    <fragment
+        android:id="@+id/mySalesFragment"
+        android:name="in.coupsome.ui.profile.MySalesFragment"
+        android:label="MySalesFragment" />
+    <fragment
+        android:id="@+id/allTransactionsFragment"
+        android:name="in.coupsome.ui.profile.AllTransactionsFragment"
+        android:label="AllTransactionsFragment" />
+</navigation>

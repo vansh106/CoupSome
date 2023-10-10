@@ -1,6 +1,7 @@
 package `in`.coupsome
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseAuth
@@ -8,6 +9,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import `in`.coupsome.ui.auth.AuthenticationActivity
 import `in`.coupsome.base.activity.BaseActivity
 import `in`.coupsome.databinding.ActivitySplashBinding
+import `in`.coupsome.ui.OnBoarding.OnBoardingActivity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject

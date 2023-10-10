@@ -59,13 +59,13 @@ class PaymentGatewayActivity : BaseActivity<ActivityPaymentGatewayBinding>(Activ
         else
             finish()
     }
-    // PhonePa
+    // PhonePe
     private fun startPayment(coupon: BuyCoupon) {
         PhonePe.init(this)
         val data = JSONObject()
         data.put("merchantTransactionId", MERCHANT_TID)//String. Mandatory
         data.put("merchantId" , MERCHANT_ID) //String. Mandatory
-        data.put("amount", coupon.price!!.toLong() )//Long. Mandatory
+        data.put("amount", coupon.price!!.toLong())//Long. Mandatory
         data.put("mobileNumber", coupon.phoneNo) //String. Optional
         data.put("callbackUrl", "https://webhook.site/callback-url") //String. Mandatory
 
@@ -265,4 +265,6 @@ class PaymentGatewayActivity : BaseActivity<ActivityPaymentGatewayBinding>(Activ
         val digest = md.digest(bytes)
         return digest.fold("") { str, it -> str + "%02x".format(it) }
     }
+
+    
 }

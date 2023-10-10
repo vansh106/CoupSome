@@ -107,6 +107,8 @@ dependencies {
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
     implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.6.0")
 
+   // on Boarding
+    implementation("androidx.viewpager2:viewpager2:1.0.0")
 }
 
 kapt {

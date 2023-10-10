@@ -18,7 +18,10 @@
         android:theme="@style/Theme.CoupSome"
         tools:targetApi="31">
         <activity
-            android:name="in.coupsome.SplashActivity"
+            android:name=".ui.onBoarding.onBoardingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,35 +32,31 @@
         <activity
             android:name=".MainActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan">
-
-        </activity>
+            android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="in.coupsome.ui.auth.AuthenticationActivity"
+            android:name=".ui.auth.AuthenticationActivity"
             android:exported="false" />
         <activity
             android:name="com.razorpay.CheckoutActivity"
             android:exported="true" />
-        <activity android:name="in.coupsome.ui.payment.PaymentGatewayActivity" />
-<!--        Phone pe -->
-        <!-- Keep it true in UAT environment for both the flags-->
+        <activity android:name=".ui.payment.PaymentGatewayActivity" /> <!-- Phone pe -->
+        <!-- Keep it true in UAT environment for both the flags -->
         <meta-data
             android:name="com.phonepe.android.sdk.isUAT"
-            android:value="true"/>
+            android:value="true" />
         <meta-data
             android:name="com.phonepe.android.sdk.isSimulator"
-            android:value="true"/>
-
-        <!-- The value will be the MID-->
+            android:value="true" /> <!-- The value will be the MID -->
         <meta-data
             android:name="com.phonepe.android.sdk.MerchantId"
-            android:value="ATMOSTUAT"/>
-
-        <!-- For UAT, App Id is not required.
-        Make sure to add the following and you get the APP Id for Production after UAT Sign-off -->
-<!--        <meta-data-->
-<!--            android:name="com.phonepe.android.sdk.AppId"-->
-<!--            android:value="your app id given by PhonePe"/>-->
+            android:value="ATMOSTUAT" />
+        <!--
+ For UAT, App Id is not required.
+        Make sure to add the following and you get the APP Id for Production after UAT Sign-off
+        -->
+        <!-- <meta-data -->
+        <!-- android:name="com.phonepe.android.sdk.AppId" -->
+        <!-- android:value="your app id given by PhonePe"/> -->
         <meta-data
             android:name="com.razorpay.ApiKey"
             android:value="rzp_test_12rgiT8lcg9CXX" />
@@ -66,7 +65,7 @@
             android:name=".util.FcmService"
             android:exported="true">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
     </application>

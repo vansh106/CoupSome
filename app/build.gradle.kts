@@ -96,8 +96,7 @@ dependencies {
     implementation("com.razorpay:checkout:1.6.33")
 
     // phonepe
-    implementation ("phonepe.intentsdk.android.snapshot:IntentSDK:releaseSDK-1138100-SNAPSHOT")
-
+    implementation ("phonepe.intentsdk.android.release:IntentSDK:2.2.0")
 
     // retrofit as well as kotlin Couritines
     implementation("com.google.code.gson:gson:2.10.1")

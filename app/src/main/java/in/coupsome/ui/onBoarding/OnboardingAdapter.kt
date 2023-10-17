@@ -1,6 +1,5 @@
 package `in`.coupsome.ui.onBoarding
 
-
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,15 +8,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import `in`.coupsome.R
 
-
-class OnboardingAdapter(onBoardingItems: ArrayList<OnBoardingItem>) :
+class OnboardingAdapter(private val onBoardingItems: List<OnBoardingItem>) :
     RecyclerView.Adapter<OnboardingAdapter.OnboardingViewHolder>() {
-    private val onBoardingItems: ArrayList<OnBoardingItem>
-
-    init {
-        this.onBoardingItems = onBoardingItems
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OnboardingViewHolder {
         return OnboardingViewHolder(
             LayoutInflater.from(parent.context).inflate(
@@ -41,9 +33,9 @@ class OnboardingAdapter(onBoardingItems: ArrayList<OnBoardingItem>) :
         private val imageOnboarding: ImageView
 
         init {
-            textTitle = itemView.findViewById(R.id.textTitle)
-            textDescription = itemView.findViewById(R.id.textDescription)
-            imageOnboarding = itemView.findViewById(R.id.imageOnboarding)
+            textTitle = itemView.findViewById<TextView>(R.id.textTitle)
+            textDescription = itemView.findViewById<TextView>(R.id.textDescription)
+            imageOnboarding = itemView.findViewById<ImageView>(R.id.imageOnboarding)
         }
 
         fun setOnBoardingData(onBoardingItem: OnBoardingItem) {

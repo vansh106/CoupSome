@@ -2,81 +2,77 @@ package `in`.coupsome.ui.onBoarding
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.content.SharedPreferences
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.preference.PreferenceManager
+import android.transition.Slide
+import android.transition.TransitionManager
 import android.util.Log
+import android.view.Gravity
+import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import androidx.viewpager2.widget.ViewPager2
-import com.google.android.material.button.MaterialButton
+import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import `in`.coupsome.MainActivity
 import `in`.coupsome.R
+import `in`.coupsome.base.activity.BaseActivity
+import `in`.coupsome.databinding.ActivityOnBoardingBinding
 import `in`.coupsome.ui.auth.AuthenticationActivity
 
-class onBoardingActivity : AppCompatActivity() {
-    private lateinit var onboardingAdapter: OnboardingAdapter
-    private lateinit var layoutOnboardingIndicator: LinearLayout
-    private lateinit var buttonOnboardingAction: MaterialButton
-    private lateinit var skipBtn: MaterialButton
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_on_boarding)
 
-        if(isOnboardingCompleted())
-        {
-            startActivity(Intent(applicationContext, AuthenticationActivity::class.java))
-            finish()
-        }
-        else
-        {
-            layoutOnboardingIndicator = findViewById<LinearLayout>(R.id.layoutOnboardingIndicators)
-            buttonOnboardingAction = findViewById<MaterialButton>(R.id.buttonOnBoardingAction)
-            skipBtn=findViewById(R.id.skipBtn)
-            setOnboardingItem()
+class onBoardingActivity : BaseActivity<ActivityOnBoardingBinding>(ActivityOnBoardingBinding::inflate){
 
+    private var onboardingAdapter: OnboardingAdapter? = null
+    lateinit var  slideInAnimation:Animation
 
-            val onboardingViewPager = findViewById<ViewPager2>(R.id.onboardingViewPager)
-            onboardingViewPager.adapter = onboardingAdapter
-
-            setOnboadingIndicator()
-            setCurrentOnboardingIndicators(0)
-            try {
-                skipBtn.setOnClickListener {
-                    startActivity(Intent(applicationContext, AuthenticationActivity::class.java))
-                    finish()
+    override fun ActivityOnBoardingBinding.setupViews(savedInstanceState: Bundle?) {
+        setOnboardingItem()
+        try {
+            slideInAnimation = AnimationUtils.loadAnimation(this@onBoardingActivity, R.anim.button_animation)
+            slideInAnimation.setAnimationListener(object : Animation.AnimationListener {
+                override fun onAnimationStart(animation: Animation) {}
+                override fun onAnimationEnd(animation: Animation) {
+                    buttonOnBoardingAction.visibility = View.VISIBLE
                 }
-            }catch (e:Exception)
-            {
-                Log.d("rk",e.message.toString())
-            }
-
-            onboardingViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) {
-                    super.onPageSelected(position)
-                    setCurrentOnboardingIndicators(position)
-                }
+                override fun onAnimationRepeat(animation: Animation) {}
             })
 
-            buttonOnboardingAction.setOnClickListener{
-                if (onboardingViewPager.currentItem + 1 < onboardingAdapter!!.itemCount) {
-                    onboardingViewPager.currentItem = onboardingViewPager.currentItem + 1
-                } else {
-                    markOnboardingCompleted()
-                    startActivity(Intent(applicationContext, MainActivity::class.java))
-                    finish()
-                }
-            }
-
+        }catch (e:Exception)
+        {
+            Log.d("rk",e.message.toString())
         }
 
+        val onboardingViewPager = findViewById<ViewPager2>(R.id.onboardingViewPager)
+        onboardingViewPager.adapter = onboardingAdapter
 
+        setOnboadingIndicator()
+        setCurrentOnboardingIndicators(0)
+
+        onboardingViewPager.registerOnPageChangeCallback(object : OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                setCurrentOnboardingIndicators(position)
+            }
+        })
+
+        buttonOnBoardingAction.setOnClickListener {
+            if (onboardingViewPager.currentItem + 1 < onboardingAdapter!!.itemCount) {
+                onboardingViewPager.currentItem = onboardingViewPager.currentItem + 1
+            } else {
+                startActivity(Intent(applicationContext, MainActivity::class.java))
+                finish()
+            }
+        }
+        skipBtn.setOnClickListener {
+            startActivity(Intent(this@onBoardingActivity,AuthenticationActivity::class.java))
+            finish()
+        }
     }
 
-    private fun setOnboadingIndicator() {
+    private fun ActivityOnBoardingBinding.setOnboadingIndicator() {
         val indicators = arrayOfNulls<ImageView>(
             onboardingAdapter!!.itemCount
         )
@@ -92,48 +88,42 @@ class onBoardingActivity : AppCompatActivity() {
                 )
             )
             indicators[i]!!.layoutParams = layoutParams
-            layoutOnboardingIndicator!!.addView(indicators[i])
+            layoutOnboardingIndicators.addView(indicators[i])
         }
     }
     @SuppressLint("SetTextI18n")
-    private fun setCurrentOnboardingIndicators(index: Int) {
-        val childCount = layoutOnboardingIndicator.childCount
+    private fun ActivityOnBoardingBinding.setCurrentOnboardingIndicators(index: Int) {
+        val childCount =layoutOnboardingIndicators.childCount
         for (i in 0 until childCount) {
-            val imageView = layoutOnboardingIndicator.getChildAt(i) as ImageView
+            val imageView = layoutOnboardingIndicators.getChildAt(i) as ImageView
             if (i == index) {
                 imageView.setImageDrawable(ContextCompat.getDrawable(applicationContext, R.drawable.onboarding_indicator_active))
             } else {
                 imageView.setImageDrawable(ContextCompat.getDrawable(applicationContext, R.drawable.onboarding_indicator_inactive))
             }
         }
-        if (index == onboardingAdapter.itemCount - 1) {
-            buttonOnboardingAction.text = "Start"
+        if (index == onboardingAdapter!!.itemCount - 1) {
+            buttonOnBoardingAction.text = "Start"
+            buttonOnBoardingAction.startAnimation(slideInAnimation)
         } else {
-            buttonOnboardingAction.text = "Next"
+            buttonOnBoardingAction  .text = "Next"
         }
     }
 
-    private fun setOnboardingItem() {
-        val onBoardingItems = ArrayList<OnBoardingItem>()
 
-        val itemFastFood = OnBoardingItem("Fast Delivery to your home","Our delivery partner is on the way to your home!",R.drawable.img1)
-        val itemPayOnline = OnBoardingItem("E-Pay your bill online","Electric bill payment is a feature of online, mobile and net banking!",R.drawable.img2)
-        val itemEatTogether = OnBoardingItem( "Eat together","Enjoy your meal and have a great day. Don't forget to rate us!",R.drawable.img3)
-        onBoardingItems.add(itemFastFood)
-        onBoardingItems.add(itemPayOnline)
-        onBoardingItems.add(itemEatTogether)
+    private fun ActivityOnBoardingBinding.setOnboardingItem() {
+        val onBoardingItems = ArrayList<OnBoardingItem>()
+        val item1 = OnBoardingItem("", "", R.drawable.image1)
+        val item2 = OnBoardingItem("", "", R.drawable.image6)
+        val item3 = OnBoardingItem("", "", R.drawable.image8)
+        val item4 = OnBoardingItem("", "", R.drawable.image10)
+        val item5 = OnBoardingItem("", "", R.drawable.image11)
+        onBoardingItems.add(item1)
+        onBoardingItems.add(item2)
+        onBoardingItems.add(item3)
+        onBoardingItems.add(item4)
+        onBoardingItems.add(item5)
         onboardingAdapter = OnboardingAdapter(onBoardingItems)
     }
-    private fun isOnboardingCompleted(): Boolean {
-        val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-        return sharedPreferences.getBoolean("onboarding_completed", false)
-    }
 
-    // Method to mark onboarding as completed
-    private fun markOnboardingCompleted() {
-        val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-        val editor: SharedPreferences.Editor = sharedPreferences.edit()
-        editor.putBoolean("onboarding_completed", true)
-        editor.apply()
-    }
 }

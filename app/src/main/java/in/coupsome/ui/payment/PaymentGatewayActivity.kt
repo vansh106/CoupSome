@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Base64
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContract
@@ -20,23 +21,20 @@ import `in`.coupsome.model.BuyCoupon
 import org.json.JSONObject
 import java.util.Calendar
 import javax.inject.Inject
-import com.phonepe.intent.sdk.api.B2BPGRequestBuilder
-import com.phonepe.intent.sdk.api.PhonePe
-import com.phonepe.intent.sdk.api.PhonePeInitException
 import `in`.coupsome.ui.PhonePa.ApiUtilities
-import `in`.coupsome.ui.PhonePa.UPIApplicationInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.nio.charset.Charset
 import java.security.MessageDigest
 
+
 @AndroidEntryPoint
 class PaymentGatewayActivity : BaseActivity<ActivityPaymentGatewayBinding>(ActivityPaymentGatewayBinding::inflate),
     PaymentResultListener {
     var apiEndPoint = "/pg/v1/pay"
-    val salt = "58a63b64-574d-417a-9214-066bee1e4caa" // salt key
-    val MERCHANT_ID = "ATMOSTUAT"  // Merhcant id
+    val salt = "70c411d2-50f1-4003-9883-d562f377d222" // salt key
+    val MERCHANT_ID = "M1T7XRCXLY46"  // Merhcant id
     val MERCHANT_TID = "txnId"
     val BASE_URL = "https://api-preprod.phonepe.com/"
 
@@ -61,11 +59,13 @@ class PaymentGatewayActivity : BaseActivity<ActivityPaymentGatewayBinding>(Activ
     }
     // PhonePe
     private fun startPayment(coupon: BuyCoupon) {
-        PhonePe.init(this)
+        PhonePe.init(this, PhonePeEnvironment.PRODUCTION,MERCHANT_ID,"4jMZv3wjxSrbP2jWrFilTJpz2uk=")
+        val string_signature = PhonePe.getPackageSignature()
+        Log.d("rk",string_signature)
         val data = JSONObject()
         data.put("merchantTransactionId", MERCHANT_TID)//String. Mandatory
         data.put("merchantId" , MERCHANT_ID) //String. Mandatory
-        data.put("amount", coupon.price!!.toLong())//Long. Mandatory
+        data.put("amount",2)//Long. Mandatory
         data.put("mobileNumber", coupon.phoneNo) //String. Optional
         data.put("callbackUrl", "https://webhook.site/callback-url") //String. Mandatory
 
@@ -83,8 +83,8 @@ class PaymentGatewayActivity : BaseActivity<ActivityPaymentGatewayBinding>(Activ
 
 //        val base64Body = android.util.Base64(Gson().toJson(data))
 
-        val payloadBase64 = android.util.Base64.encodeToString(
-            data.toString().toByteArray(Charset.defaultCharset()), android.util.Base64.NO_WRAP
+        val payloadBase64 = Base64.encodeToString(
+            data.toString().toByteArray(Charset.defaultCharset()), Base64.NO_WRAP
         )
 
         val checksum = sha256(payloadBase64 + apiEndPoint + salt) + "###1";
@@ -252,7 +252,7 @@ class PaymentGatewayActivity : BaseActivity<ActivityPaymentGatewayBinding>(Activ
                 Log.d("phonepe", "onCreate: S ${res.body()}")
 
                 if (res.body() != null && res.body()!!.success) {
-                    Log.d("phonepe", "onCreate: success")
+                    Log.d("phonepe", "onCreate: ${res.body()!!.message}")
                     Toast.makeText(this@PaymentGatewayActivity, res.body()!!.message, Toast.LENGTH_SHORT).show()
 
                 }

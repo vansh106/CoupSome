@@ -9,7 +9,7 @@ import retrofit2.http.Path
 interface ApiInterface {
 
 
-    @GET("apis/pg-sandbox/pg/v1/status/{merchantId}/{transactionId}")
+    @GET("apis/hermes/pg/v1/status/{merchantId}/{transactionId}")
     suspend fun checkStatus(
         @Path("merchantId") merchantId: String,
         @Path("transactionId") transactionId: String,

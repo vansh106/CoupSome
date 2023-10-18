@@ -8,7 +8,7 @@ object ApiUtilities {
 
     fun getApiInterface(): ApiInterface {
         return Retrofit.Builder()
-            .baseUrl("https://api-preprod.phonepe.com/")
+            .baseUrl("https://api.phonepe.com/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(ApiInterface::class.java)

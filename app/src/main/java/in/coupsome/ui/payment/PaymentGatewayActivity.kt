@@ -18,6 +18,7 @@ import com.phonepe.intent.sdk.api.models.PhonePeEnvironment
 import com.razorpay.Checkout
 import com.razorpay.PaymentResultListener
 import dagger.hilt.android.AndroidEntryPoint
+import `in`.coupsome.MainActivity
 import `in`.coupsome.base.activity.BaseActivity
 import `in`.coupsome.databinding.ActivityPaymentGatewayBinding
 import `in`.coupsome.di.UsersReference
@@ -39,7 +40,7 @@ class PaymentGatewayActivity : BaseActivity<ActivityPaymentGatewayBinding>(Activ
     var apiEndPoint = "/pg/v1/pay"
     val salt = "70c411d2-50f1-4003-9883-d562f377d222" // salt key
     val MERCHANT_ID = "M1T7XRCXLY46"  // Merhcant id
-    val MERCHANT_TID = "txnId"
+    val MERCHANT_TID = "txnIdqq"+System.currentTimeMillis().toString()
     val BASE_URL = "https://api-preprod.phonepe.com/"
 
 
@@ -63,15 +64,13 @@ class PaymentGatewayActivity : BaseActivity<ActivityPaymentGatewayBinding>(Activ
     }
     // PhonePe
     private fun startPayment(coupon: BuyCoupon) {
-        PhonePe.init(this, PhonePeEnvironment.RELEASE, MERCHANT_ID, "4jMZv3wjxSrbP2jWrFilTJpz2uk=")
-        val string_signature = PhonePe.getPackageSignature()
-        Log.d("rk",string_signature)
+        PhonePe.init(this, PhonePeEnvironment.RELEASE, MERCHANT_ID, "0d2d9a28894e44038cd5c96defdbc03a")
         val data = JSONObject()
         data.put("merchantTransactionId", MERCHANT_TID)//String. Mandatory
         data.put("merchantId" , MERCHANT_ID) //String. Mandatory
-        data.put("amount",2)//Long. Mandatory
+        data.put("amount",coupon.price!!.toInt()*100)//Long. Mandatory
         data.put("mobileNumber", coupon.phoneNo) //String. Optional
-        data.put("callbackUrl", "https://webhook.site/callback-url") //String. Mandatory
+        data.put("callbackUrl", "coupsome@gmail.com") //String. Mandatory
 
         val paymentInstrument = JSONObject()
         paymentInstrument.put("type", "UPI_INTENT")
@@ -87,14 +86,12 @@ class PaymentGatewayActivity : BaseActivity<ActivityPaymentGatewayBinding>(Activ
 
 //        val base64Body = android.util.Base64(Gson().toJson(data))
 
-        val payloadBase64 = Base64.encodeToString(
-            data.toString().toByteArray(Charset.defaultCharset()), Base64.NO_WRAP
-        )
-
+        val payloadBase64 = Base64.encodeToString(data.toString().toByteArray(Charset.defaultCharset()), Base64.NO_WRAP)
         val checksum = sha256(payloadBase64 + apiEndPoint + salt) + "###1";
 
-        Log.d("PAPAYACODERS", "onCreate: payload $payloadBase64")
-        Log.d("PAPAYACODERS", "onCreate: checksum $checksum")
+        Log.d("rk", "onCreate: payload $payloadBase64")
+        Log.d("rk", "onCreate: payload 1")
+        Log.d("rk", "onCreate: checksum $checksum")
 
         val b2BPGRequest = B2BPGRequestBuilder()
             .setData(payloadBase64)
@@ -106,19 +103,75 @@ class PaymentGatewayActivity : BaseActivity<ActivityPaymentGatewayBinding>(Activ
 //        val button = findViewById<Button>(R.id.button)
 //        button.setOnClickListener {
 //            //For SDK call below function
-//
 
-            Log.d("PAPAYACODERS", "onCreate: $payloadBase64")
-            Log.d("PAPAYACODERS", "onCreate: $checksum")
-
-            try {
-                PhonePe.getImplicitIntent(this, b2BPGRequest, "net.one97.paytm")
-                    ?.let { startActivityForResult(it, 1) };
-            } catch (e: PhonePeInitException) {
-                Log.e("PaymentGatewayActivity", "startPayment: ", e)
-            }
+        try {
+            PhonePe.getImplicitIntent(this, b2BPGRequest, "net.one97.paytm")
+                ?.let { startActivityForResult(it, 1112) };
+        } catch (e: PhonePeInitException) {
+            Log.e("PaymentGatewayActivity", "startPayment: ", e)
+        }
 
 //        }
+    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 1112 && resultCode== RESULT_OK) {
+            Log.d("rk", "onActivityResult: $data")
+            Log.d("rk", "onActivityResult: ${data!!.data}")
+            checkStatus()
+
+            /*This callback indicates only about completion of UI flow.
+            Inform your server to make the transaction
+            status call to get the status. Update your app with the
+            success/failure status.*/
+        }
+    }
+    private fun checkStatus() {
+
+        val xVerify =
+            sha256("/pg/v1/status/$MERCHANT_ID/${MERCHANT_TID}${salt}") + "###1"
+
+        Log.d("rk", "onCreate  xverify : $xVerify")
+
+
+        val headers = mapOf(
+            "Content-Type" to "application/json",
+            "X-VERIFY" to xVerify,
+            "X-MERCHANT-ID" to MERCHANT_ID,
+        )
+
+        lifecycleScope.launch(Dispatchers.IO) {
+
+            val res = ApiUtilities.getApiInterface().checkStatus(MERCHANT_ID, MERCHANT_TID, headers)
+
+            withContext(Dispatchers.Main) {
+
+                Log.d("rk", "onCreate: S ${res.body()}")
+
+                if (res.body() != null && res.body()!!.success) {
+                    Log.d("rk", "onCreate: ${res.body()!!.message}")
+                    Toast.makeText(
+                        this@PaymentGatewayActivity,
+                        res.body()!!.message,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    if (res.body()!!.data.state == "COMPLETED") {
+                        onPaymentSuccess(MERCHANT_TID)
+                        startActivity(Intent(this@PaymentGatewayActivity, MainActivity::class.java))
+                    }
+                    else
+                    {
+                        startActivity(Intent(this@PaymentGatewayActivity, MainActivity::class.java))
+                    }
+                }
+            }
+        }
+    }
+    private fun sha256(input: String): String {
+        val bytes = input.toByteArray(Charsets.UTF_8)
+        val md = MessageDigest.getInstance("SHA-256")
+        val digest = md.digest(bytes)
+        return digest.fold("") { str, it -> str + "%02x".format(it) }
     }
     // RosePay
     private fun startPayment2(coupon: BuyCoupon) {
@@ -219,57 +272,5 @@ class PaymentGatewayActivity : BaseActivity<ActivityPaymentGatewayBinding>(Activ
 
         override fun parseResult(resultCode: Int, intent: Intent?): Boolean = resultCode == RESULT_OK
     }
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 1) {
 
-            Log.d("PAPAYACODERS", "onActivityResult: $data")
-            Log.d("PAPAYACODERS", "onActivityResult: ${data!!.data}")
-
-            checkStatus()
-
-            /*This callback indicates only about completion of UI flow.
-            Inform your server to make the transaction
-            status call to get the status. Update your app with the
-            success/failure status.*/
-        }
-    }
-    private fun checkStatus() {
-
-        val xVerify =
-            sha256("/pg/v1/status/$MERCHANT_ID/${MERCHANT_TID}${salt}") + "###1"
-
-        Log.d("phonepe", "onCreate  xverify : $xVerify")
-
-
-        val headers = mapOf(
-            "Content-Type" to "application/json",
-            "X-VERIFY" to xVerify,
-            "X-MERCHANT-ID" to MERCHANT_ID,
-        )
-
-        lifecycleScope.launch(Dispatchers.IO) {
-
-            val res = ApiUtilities.getApiInterface().checkStatus(MERCHANT_ID, MERCHANT_TID, headers)
-
-            withContext(Dispatchers.Main) {
-
-                Log.d("phonepe", "onCreate: S ${res.body()}")
-
-                if (res.body() != null && res.body()!!.success) {
-                    Log.d("phonepe", "onCreate: ${res.body()!!.message}")
-                    Toast.makeText(this@PaymentGatewayActivity, res.body()!!.message, Toast.LENGTH_SHORT).show()
-
-                }
-            }
-        }
-    }
-    private fun sha256(input: String): String {
-        val bytes = input.toByteArray(Charsets.UTF_8)
-        val md = MessageDigest.getInstance("SHA-256")
-        val digest = md.digest(bytes)
-        return digest.fold("") { str, it -> str + "%02x".format(it) }
-    }
-
-    
 }

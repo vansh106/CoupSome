@@ -11,6 +11,10 @@ import androidx.activity.result.contract.ActivityResultContract
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
+import com.phonepe.intent.sdk.api.B2BPGRequestBuilder
+import com.phonepe.intent.sdk.api.PhonePe
+import com.phonepe.intent.sdk.api.PhonePeInitException
+import com.phonepe.intent.sdk.api.models.PhonePeEnvironment
 import com.razorpay.Checkout
 import com.razorpay.PaymentResultListener
 import dagger.hilt.android.AndroidEntryPoint
@@ -18,15 +22,15 @@ import `in`.coupsome.base.activity.BaseActivity
 import `in`.coupsome.databinding.ActivityPaymentGatewayBinding
 import `in`.coupsome.di.UsersReference
 import `in`.coupsome.model.BuyCoupon
-import org.json.JSONObject
-import java.util.Calendar
-import javax.inject.Inject
 import `in`.coupsome.ui.PhonePa.ApiUtilities
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.json.JSONObject
 import java.nio.charset.Charset
 import java.security.MessageDigest
+import java.util.Calendar
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -59,7 +63,7 @@ class PaymentGatewayActivity : BaseActivity<ActivityPaymentGatewayBinding>(Activ
     }
     // PhonePe
     private fun startPayment(coupon: BuyCoupon) {
-        PhonePe.init(this, PhonePeEnvironment.PRODUCTION,MERCHANT_ID,"4jMZv3wjxSrbP2jWrFilTJpz2uk=")
+        PhonePe.init(this, PhonePeEnvironment.RELEASE, MERCHANT_ID, "4jMZv3wjxSrbP2jWrFilTJpz2uk=")
         val string_signature = PhonePe.getPackageSignature()
         Log.d("rk",string_signature)
         val data = JSONObject()
@@ -111,6 +115,7 @@ class PaymentGatewayActivity : BaseActivity<ActivityPaymentGatewayBinding>(Activ
                 PhonePe.getImplicitIntent(this, b2BPGRequest, "net.one97.paytm")
                     ?.let { startActivityForResult(it, 1) };
             } catch (e: PhonePeInitException) {
+                Log.e("PaymentGatewayActivity", "startPayment: ", e)
             }
 
 //        }

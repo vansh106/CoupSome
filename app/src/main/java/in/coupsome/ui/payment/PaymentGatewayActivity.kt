@@ -1,13 +1,27 @@
 package `in`.coupsome.ui.payment
 
 import android.app.Activity
+import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ApplicationInfo
+import android.content.pm.PackageManager
+import android.content.pm.ResolveInfo
+import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Bundle
 import android.util.Base64
 import android.util.Log
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.ImageView
+import android.widget.ListView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContract
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
@@ -19,6 +33,7 @@ import com.razorpay.Checkout
 import com.razorpay.PaymentResultListener
 import dagger.hilt.android.AndroidEntryPoint
 import `in`.coupsome.MainActivity
+import `in`.coupsome.R
 import `in`.coupsome.base.activity.BaseActivity
 import `in`.coupsome.databinding.ActivityPaymentGatewayBinding
 import `in`.coupsome.di.UsersReference
@@ -40,9 +55,8 @@ class PaymentGatewayActivity : BaseActivity<ActivityPaymentGatewayBinding>(Activ
     var apiEndPoint = "/pg/v1/pay"
     val salt = "70c411d2-50f1-4003-9883-d562f377d222" // salt key
     val MERCHANT_ID = "M1T7XRCXLY46"  // Merhcant id
-    val MERCHANT_TID = "txnIdqq"+System.currentTimeMillis().toString()
+    val MERCHANT_TID = "txnIdqq" + System.currentTimeMillis().toString()
     val BASE_URL = "https://api-preprod.phonepe.com/"
-
 
     private val coupon by lazy { intent.getParcelableExtra<BuyCoupon>(ARG_COUPON) }
 
@@ -62,60 +76,11 @@ class PaymentGatewayActivity : BaseActivity<ActivityPaymentGatewayBinding>(Activ
         else
             finish()
     }
+
     // PhonePe
-    private fun startPayment(coupon: BuyCoupon) {
-        PhonePe.init(this, PhonePeEnvironment.RELEASE, MERCHANT_ID, "0d2d9a28894e44038cd5c96defdbc03a")
-        val data = JSONObject()
-        data.put("merchantTransactionId", MERCHANT_TID)//String. Mandatory
-        data.put("merchantId" , MERCHANT_ID) //String. Mandatory
-        data.put("amount",coupon.price!!.toInt()*100)//Long. Mandatory
-        data.put("mobileNumber", coupon.phoneNo) //String. Optional
-        data.put("callbackUrl", "coupsome@gmail.com") //String. Mandatory
-
-        val paymentInstrument = JSONObject()
-        paymentInstrument.put("type", "UPI_INTENT")
-        paymentInstrument.put("targetApp", "net.one97.paytm")
-
-        data.put("paymentInstrument", paymentInstrument )//OBJECT. Mandatory
-
-
-        val deviceContext = JSONObject()
-        deviceContext.put("deviceOS", "ANDROID")
-        data.put("deviceContext", deviceContext)
-
-
-//        val base64Body = android.util.Base64(Gson().toJson(data))
-
-        val payloadBase64 = Base64.encodeToString(data.toString().toByteArray(Charset.defaultCharset()), Base64.NO_WRAP)
-        val checksum = sha256(payloadBase64 + apiEndPoint + salt) + "###1";
-
-        Log.d("rk", "onCreate: payload $payloadBase64")
-        Log.d("rk", "onCreate: payload 1")
-        Log.d("rk", "onCreate: checksum $checksum")
-
-        val b2BPGRequest = B2BPGRequestBuilder()
-            .setData(payloadBase64)
-            .setChecksum(checksum)
-            .setUrl(apiEndPoint)
-            .build()
-
-
-//        val button = findViewById<Button>(R.id.button)
-//        button.setOnClickListener {
-//            //For SDK call below function
-
-        try {
-            PhonePe.getImplicitIntent(this, b2BPGRequest, "net.one97.paytm")
-                ?.let { startActivityForResult(it, 1112) };
-        } catch (e: PhonePeInitException) {
-            Log.e("PaymentGatewayActivity", "startPayment: ", e)
-        }
-
-//        }
-    }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 1112 && resultCode== RESULT_OK) {
+        if (requestCode == 1112 && resultCode == RESULT_OK) {
             Log.d("rk", "onActivityResult: $data")
             Log.d("rk", "onActivityResult: ${data!!.data}")
             checkStatus()
@@ -126,6 +91,7 @@ class PaymentGatewayActivity : BaseActivity<ActivityPaymentGatewayBinding>(Activ
             success/failure status.*/
         }
     }
+
     private fun checkStatus() {
 
         val xVerify =
@@ -158,21 +124,21 @@ class PaymentGatewayActivity : BaseActivity<ActivityPaymentGatewayBinding>(Activ
                     if (res.body()!!.data.state == "COMPLETED") {
                         onPaymentSuccess(MERCHANT_TID)
                         startActivity(Intent(this@PaymentGatewayActivity, MainActivity::class.java))
-                    }
-                    else
-                    {
+                    } else {
                         startActivity(Intent(this@PaymentGatewayActivity, MainActivity::class.java))
                     }
                 }
             }
         }
     }
+
     private fun sha256(input: String): String {
         val bytes = input.toByteArray(Charsets.UTF_8)
         val md = MessageDigest.getInstance("SHA-256")
         val digest = md.digest(bytes)
         return digest.fold("") { str, it -> str + "%02x".format(it) }
     }
+
     // RosePay
     private fun startPayment2(coupon: BuyCoupon) {
         val activity: Activity = this
@@ -270,7 +236,107 @@ class PaymentGatewayActivity : BaseActivity<ActivityPaymentGatewayBinding>(Activ
             Intent(context, PaymentGatewayActivity::class.java)
                 .putExtra(ARG_COUPON, input)
 
-        override fun parseResult(resultCode: Int, intent: Intent?): Boolean = resultCode == RESULT_OK
+        override fun parseResult(resultCode: Int, intent: Intent?): Boolean =
+            resultCode == RESULT_OK
     }
 
+    private fun getUPIApps(): List<ApplicationInfo> {
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse("upi://pay")
+
+        val resolveInfoList = packageManager.queryIntentActivities(intent, 0)
+
+        val upiApps = mutableListOf<ApplicationInfo>()
+        for (resolveInfo in resolveInfoList) {
+            val packageName = resolveInfo.activityInfo.packageName
+            val applicationInfo = packageManager.getApplicationInfo(packageName, 0)
+            upiApps.add(applicationInfo)
+        }
+
+        return upiApps
+    }
+
+    class UPIAppAdapter(context: AppCompatActivity, private val apps: List<ApplicationInfo>) :
+        ArrayAdapter<ApplicationInfo>(context, R.layout.list_item_upi_app, apps) {
+
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+            val itemView = convertView ?: View.inflate(context, R.layout.list_item_upi_app, null)
+            val appIcon = itemView.findViewById<ImageView>(R.id.appIcon)
+            val appName = itemView.findViewById<TextView>(R.id.appName)
+            val appInfo = apps[position]
+            appIcon.setImageDrawable(appInfo.loadIcon(context.packageManager))
+            appName.text = appInfo.loadLabel(context.packageManager)
+            return itemView
+        }
+    }
+
+    private fun startUPIApp(packageName: String, coupon: BuyCoupon) {
+        PhonePe.init(
+            this@PaymentGatewayActivity,
+            PhonePeEnvironment.RELEASE,
+            MERCHANT_ID,
+            "0d2d9a28894e44038cd5c96defdbc03a"
+        )
+        val selectedAppPackage = packageName
+
+        val data = JSONObject()
+        data.put("merchantTransactionId", MERCHANT_TID)//String. Mandatory
+        data.put("merchantId", MERCHANT_ID) //String. Mandatory
+        data.put("amount", coupon.price!!.toInt() * 100)//Long. Mandatory
+        data.put("mobileNumber", coupon.phoneNo) //String. Optional
+        data.put("callbackUrl", "coupsome@gmail.com") //String. Mandatory
+        val paymentInstrument = JSONObject()
+        paymentInstrument.put("type", "UPI_INTENT")
+        paymentInstrument.put("targetApp", selectedAppPackage)
+        data.put("paymentInstrument", paymentInstrument)//OBJECT. Mandatory
+        val deviceContext = JSONObject()
+        deviceContext.put("deviceOS", "ANDROID")
+        data.put("deviceContext", deviceContext)
+        val payloadBase64 = Base64.encodeToString(
+            data.toString().toByteArray(Charset.defaultCharset()),
+            Base64.NO_WRAP
+        )
+        val checksum = sha256(payloadBase64 + apiEndPoint + salt) + "###1";
+        Log.d("rk", "onCreate: payload $payloadBase64")
+        Log.d("rk", "onCreate: payload 1")
+        Log.d("rk", "onCreate: checksum $checksum")
+        val b2BPGRequest = B2BPGRequestBuilder()
+            .setData(payloadBase64)
+            .setChecksum(checksum)
+            .setUrl(apiEndPoint)
+            .build()
+        try {
+            PhonePe.getImplicitIntent(this@PaymentGatewayActivity, b2BPGRequest, selectedAppPackage)
+                ?.let { startActivityForResult(it, 1112) };
+        } catch (e: PhonePeInitException) {
+            Log.e("rk", "startPayment: ", e)
+        }
+    }
+
+    private fun ActivityPaymentGatewayBinding.startPayment(coupon: BuyCoupon) {
+        val upiApps = getUPIApps()
+        val adapter = UPIAppAdapter(this@PaymentGatewayActivity, upiApps)
+//        listView.adapter = adapter
+//        listView.setOnItemClickListener { _, _, position, _ ->
+//            val selectedApp = upiApps[position]
+//            val packageName = selectedApp.packageName
+//            startUPIApp(packageName, coupon)
+//
+//        }
+//    }
+        val dialog = AlertDialog.Builder(this@PaymentGatewayActivity)
+            .setTitle("Select a UPI App")
+            .setAdapter(adapter) { _, which ->
+                val selectedApp = upiApps[which]
+                val packageName = selectedApp.packageName
+                startUPIApp(packageName, coupon)
+            }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+                startActivity(Intent(this@PaymentGatewayActivity,MainActivity::class.java))
+                finish()
+            }
+            .create()
+        dialog.show()
+    }
 }

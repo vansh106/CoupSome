@@ -2,13 +2,9 @@ package `in`.coupsome.ui.payment
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
-import android.content.pm.PackageManager
-import android.content.pm.ResolveInfo
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.util.Base64
@@ -17,7 +13,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
-import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContract
@@ -38,6 +33,7 @@ import `in`.coupsome.base.activity.BaseActivity
 import `in`.coupsome.databinding.ActivityPaymentGatewayBinding
 import `in`.coupsome.di.UsersReference
 import `in`.coupsome.model.BuyCoupon
+import `in`.coupsome.model.PaymentMode
 import `in`.coupsome.ui.PhonePa.ApiUtilities
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -204,7 +200,7 @@ class PaymentGatewayActivity : BaseActivity<ActivityPaymentGatewayBinding>(Activ
                 .child("my_sales")
                 .child(coupon.key!!)
                 .child("valid")
-                .setValue("2")
+                .setValue(PaymentMode.REDEEMED.value)
             txnMap["txn_type"] = "Sale"
             userReference
                 .child(coupon.userId!!)

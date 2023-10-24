@@ -5,9 +5,11 @@ import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
-import `in`.coupsome.ui.auth.AuthenticationActivity
 import `in`.coupsome.base.activity.BaseActivity
 import `in`.coupsome.databinding.ActivitySplashBinding
+import `in`.coupsome.ui.auth.AuthenticationActivity
+import `in`.coupsome.ui.onBoarding.OnBoardingActivity
+import `in`.coupsome.util.CoupsomeSharedPreferences
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -19,15 +21,22 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>(ActivitySplashBinding
     @Inject
     lateinit var firebaseAuth: FirebaseAuth
 
+    @Inject
+    lateinit var sharedPreferences: CoupsomeSharedPreferences
+
     override fun ActivitySplashBinding.setupViews(savedInstanceState: Bundle?) {
-        lifecycleScope.launch {
-            delay(500)
-            if (firebaseAuth.currentUser != null) {
-                MainActivity.start(this@SplashActivity)
-                finish()
-            } else {
-                AuthenticationActivity.start(this@SplashActivity)
-                finish()
+        if (!sharedPreferences.has(CoupsomeSharedPreferences.IS_FIRST_TIME)) {
+            OnBoardingActivity.start(this@SplashActivity)
+            finish()
+        } else {
+            lifecycleScope.launch {
+                if (firebaseAuth.currentUser != null) {
+                    MainActivity.start(this@SplashActivity)
+                    finish()
+                } else {
+                    AuthenticationActivity.start(this@SplashActivity)
+                    finish()
+                }
             }
         }
     }

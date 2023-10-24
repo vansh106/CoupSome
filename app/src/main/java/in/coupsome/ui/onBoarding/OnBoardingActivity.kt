@@ -1,12 +1,10 @@
 package `in`.coupsome.ui.onBoarding
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.transition.Slide
-import android.transition.TransitionManager
 import android.util.Log
-import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
@@ -16,27 +14,34 @@ import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
+import dagger.hilt.android.AndroidEntryPoint
 import `in`.coupsome.MainActivity
 import `in`.coupsome.R
 import `in`.coupsome.base.activity.BaseActivity
 import `in`.coupsome.databinding.ActivityOnBoardingBinding
 import `in`.coupsome.ui.auth.AuthenticationActivity
+import `in`.coupsome.util.CoupsomeSharedPreferences
+import javax.inject.Inject
 
-
-class onBoardingActivity : BaseActivity<ActivityOnBoardingBinding>(ActivityOnBoardingBinding::inflate){
+@AndroidEntryPoint
+class OnBoardingActivity : BaseActivity<ActivityOnBoardingBinding>(ActivityOnBoardingBinding::inflate) {
 
     private var onboardingAdapter: OnboardingAdapter? = null
-    lateinit var  slideInAnimation:Animation
+    lateinit var slideInAnimation: Animation
+
+    @Inject
+    lateinit var sharedPreferences: CoupsomeSharedPreferences
 
     override fun ActivityOnBoardingBinding.setupViews(savedInstanceState: Bundle?) {
         setOnboardingItem()
         try {
-            slideInAnimation = AnimationUtils.loadAnimation(this@onBoardingActivity, R.anim.button_animation)
+            slideInAnimation = AnimationUtils.loadAnimation(this@OnBoardingActivity, R.anim.button_animation)
             slideInAnimation.setAnimationListener(object : Animation.AnimationListener {
                 override fun onAnimationStart(animation: Animation) {}
                 override fun onAnimationEnd(animation: Animation) {
                     buttonOnBoardingAction.visibility = View.VISIBLE
                 }
+
                 override fun onAnimationRepeat(animation: Animation) {}
             })
 
@@ -62,12 +67,13 @@ class onBoardingActivity : BaseActivity<ActivityOnBoardingBinding>(ActivityOnBoa
             if (onboardingViewPager.currentItem + 1 < onboardingAdapter!!.itemCount) {
                 onboardingViewPager.currentItem = onboardingViewPager.currentItem + 1
             } else {
+                sharedPreferences.put(CoupsomeSharedPreferences.IS_FIRST_TIME, false)
                 startActivity(Intent(applicationContext, MainActivity::class.java))
                 finish()
             }
         }
         skipBtn.setOnClickListener {
-            startActivity(Intent(this@onBoardingActivity,AuthenticationActivity::class.java))
+            startActivity(Intent(this@OnBoardingActivity, AuthenticationActivity::class.java))
             finish()
         }
     }
@@ -124,6 +130,14 @@ class onBoardingActivity : BaseActivity<ActivityOnBoardingBinding>(ActivityOnBoa
         onBoardingItems.add(item4)
         onBoardingItems.add(item5)
         onboardingAdapter = OnboardingAdapter(onBoardingItems)
+    }
+
+    companion object {
+        @JvmStatic
+        fun start(context: Context) {
+            val starter = Intent(context, OnBoardingActivity::class.java)
+            context.startActivity(starter)
+        }
     }
 
 }

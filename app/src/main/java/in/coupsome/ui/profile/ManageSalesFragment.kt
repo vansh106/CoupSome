@@ -18,6 +18,7 @@ import `in`.coupsome.databinding.FragmentRecyclerViewBinding
 import `in`.coupsome.databinding.ItemCouponBinding
 import `in`.coupsome.di.UsersReference
 import `in`.coupsome.model.BuyCoupon
+import `in`.coupsome.model.PaymentMode
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -60,21 +61,25 @@ class ManageSalesFragment : BaseFragment<FragmentRecyclerViewBinding>(
                                 dialog.dismiss()
                             }.show()
                     }
-                    tvStatus.text = when (data.valid) {
-                        "0" -> "Verified"
-                        "3" -> "Rejected"
-                        else -> "Pending"
-                    }
-                    tvStatus.setTextColor(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            when (data.valid) {
-                                "0" -> R.color.green_900
-                                "3" -> R.color.red_900
-                                else -> R.color.orange_900
-                            }
+                    data.valid?.toIntOrNull()?.let {
+                        tvStatus.text = when (PaymentMode.fromInt(it)) {
+                            PaymentMode.ADDED -> "Not Verified"
+                            PaymentMode.VERIFIED -> "Verified"
+                            PaymentMode.REJECTED -> "Rejected"
+                            PaymentMode.REDEEMED -> ""
+                        }
+                        tvStatus.setTextColor(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                when (PaymentMode.fromInt(it)) {
+                                    PaymentMode.ADDED -> R.color.orange_900
+                                    PaymentMode.VERIFIED -> R.color.green_900
+                                    PaymentMode.REJECTED -> R.color.red_900
+                                    PaymentMode.REDEEMED -> R.color.purple_200
+                                }
+                            )
                         )
-                    )
+                    }
                 }
             }
         }
@@ -93,10 +98,11 @@ class ManageSalesFragment : BaseFragment<FragmentRecyclerViewBinding>(
         for (dataSnapshot in snapshot.children) {
             val m: BuyCoupon? = dataSnapshot.getValue(BuyCoupon::class.java)
             m?.key = dataSnapshot.key
-            when {
-                m?.valid.equals("2") -> continue
-                m?.valid.equals("3") -> continue
-            }
+
+            if (m?.valid.equals(PaymentMode.REDEEMED.value) ||
+                m?.valid.equals(PaymentMode.REJECTED.value)
+            ) continue
+
             if (m != null) {
                 list.add(m)
             }

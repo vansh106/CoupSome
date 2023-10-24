@@ -17,6 +17,7 @@ import `in`.coupsome.databinding.FragmentBuyCouponsBinding
 import `in`.coupsome.databinding.ItemCouponBinding
 import `in`.coupsome.di.UsersReference
 import `in`.coupsome.model.BuyCoupon
+import `in`.coupsome.model.PaymentMode
 import `in`.coupsome.ui.payment.PaymentGatewayActivity
 import javax.inject.Inject
 
@@ -62,7 +63,6 @@ class BuyCouponsFragment : BaseFragment<FragmentBuyCouponsBinding>(FragmentBuyCo
                     tvDescription.text = data.benefits
                     tvPrice.text = getString(R.string.rupee_x, data.price)
                     btnBuy.setOnClickListener {
-                        Log.d("BuyCouponsFragment.kt", "YASH => :62 ${data.userId}")
                         paymentGatewayActivityLauncher.launch(data)
                     }
                     imgCoupon.setImageResource(
@@ -96,10 +96,9 @@ class BuyCouponsFragment : BaseFragment<FragmentBuyCouponsBinding>(FragmentBuyCo
                         this.key = saleSnapshot.key
                         this.userId = userId
                     }?.let {
-                        if (it.valid != "0") {
-                            return@let
+                        if (it.valid == PaymentMode.VERIFIED.value) {
+                            list.add(it)
                         }
-                        list.add(it)
                     }
                 }
             }

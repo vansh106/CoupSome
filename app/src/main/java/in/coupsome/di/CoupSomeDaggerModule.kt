@@ -5,12 +5,12 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.ktx.Firebase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import `in`.coupsome.util.CoupsomeSharedPreferences
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
@@ -54,4 +54,8 @@ object CoupSomeDaggerModule {
     @Singleton
     @Provides
     fun provideCurrentUser(firebaseAuth: FirebaseAuth): FirebaseUser? = firebaseAuth.currentUser
+
+    @Singleton
+    @Provides
+    fun provideSharedPreferences(@ApplicationContext context: Context) = CoupsomeSharedPreferences(context)
 }

@@ -16,6 +16,7 @@ import `in`.coupsome.databinding.FragmentRedeemBinding
 import `in`.coupsome.databinding.ItemSaleBinding
 import `in`.coupsome.di.UsersReference
 import `in`.coupsome.model.BuyCoupon
+import `in`.coupsome.model.PaymentMode
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -79,7 +80,7 @@ class MySalesFragment : BaseFragment<FragmentRedeemBinding>(
         for (dataSnapshot in snapshot.children) {
             Log.d("MySalesFragment.kt", "YASH => onDataChange:79 $dataSnapshot")
             val m: BuyCoupon? = dataSnapshot.getValue(BuyCoupon::class.java)
-            if (m?.valid.equals("2")) {
+            if (m?.valid.equals(PaymentMode.REDEEMED.value)) {
                 m?.let { list.add(it) }
             }
         }

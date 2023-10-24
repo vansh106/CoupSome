@@ -9,6 +9,7 @@ import `in`.coupsome.databinding.FragmentAddCouponBinding
 import `in`.coupsome.di.AllCouponsReference
 import `in`.coupsome.di.UsersReference
 import `in`.coupsome.model.BuyCoupon
+import `in`.coupsome.model.PaymentMode
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -60,7 +61,7 @@ class AddCouponFragment : BaseFragment<FragmentAddCouponBinding>(
             brand = etBrand.text.toString(),
             category = spinnerCategories.selectedItem.toString(),
             code = etCouponCode.text.toString(),
-            valid = "0"
+            valid = PaymentMode.ADDED.value
         )
         userReference.child(userId).child("my_sales").push().setValue(
             coupon

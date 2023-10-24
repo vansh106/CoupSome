@@ -1,6 +1,7 @@
 package `in`.coupsome.base.activity
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
